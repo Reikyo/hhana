@@ -1312,7 +1312,7 @@ class SystematicsSample(Sample):
 class MC(SystematicsSample):
 
     def __init__(self, *args, **kwargs):
-        self.pileup_weight = kwargs.pop('pileup_weight', True)
+        self.pileup_weight = kwargs.pop('pileup_weight', False)
         super(MC, self).__init__(*args, **kwargs)
 
     def systematics_components(self):
@@ -1337,7 +1337,7 @@ class MC(SystematicsSample):
 
     def weight_fields(self):
         return super(MC, self).weight_fields() + [
-            'weight_mc',
+            'weight_total',
             # uncertainty on these are small and are ignored:
             # 'tau1_fakerate_sf_reco',
             # 'tau2_fakerate_sf_reco',
@@ -1363,7 +1363,7 @@ class MC(SystematicsSample):
                 'PU_RESCALE': {
                     'UP': ['pileup_weight_high'],
                     'DOWN': ['pileup_weight_low'],
-                    'NOMINAL': ['weight_pileup']},
+                    'NOMINAL': ['']},
                 })
         if self.channel == 'hadhad':
             if self.year == 2011:

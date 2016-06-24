@@ -13,12 +13,12 @@ from root_numpy import fill_hist
 # Higgs cross sections and branching ratios
 import yellowhiggs
 
+
 # local imports
 from . import log
 from .. import ETC_DIR, CACHE_DIR, DAT_DIR
 from ..utils import uniform_hist
 from .sample import MC, Signal
-
 
 TAUTAUHADHADBR = 0.4197744 # = (1. - 0.3521) ** 2
 
@@ -202,11 +202,18 @@ class Higgs(MC, Signal):
         else:
             for mode in modes:
                 generator = Higgs.MODES_DICT[mode][generator_index]
-                for mass in masses:
-                    self.samples.append('%s%sH%d_tautauhh%s' % (
-                        generator, mode, mass, suffix))
-                    self.masses.append(mass)
-                    self.modes.append(mode)
+                # for mass in masses:
+                #     self.samples.append('%s%sH%d_tautauhh_e3888_s2608_s2183_r6765_r6282_p2524' % (
+                #         generator, mode, mass, suffix))
+                #     self.masses.append(mass)
+                #     self.modes.append(mode)
+                # HACK
+                self.masses.append(125)
+                self.samples.append('PoPy8_ggH125_tautauhh_e3935_s2608_s2183_r6765_r6282_p2524')
+                self.modes.append('gg')
+                self.masses.append(125)
+                self.samples.append('PoPy8_VBFH125_tautauhh_e3888_s2608_s2183_r6765_r6282_p2524')
+                self.modes.append('VBF')
 
         if len(self.modes) == 1:
             self.mode = self.modes[0]

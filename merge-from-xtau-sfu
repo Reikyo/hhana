@@ -2,7 +2,7 @@
 
 import os, sys
 from hhdb.datasets import Database
-
+from hhdb.samples import get_systematics_mc
 import re
 import os
 from glob import glob
@@ -12,13 +12,6 @@ import ROOT
 import logging
 from rootpy import asrootpy
 
-from argparse import ArgumentParser
-parser = ArgumentParser()
-parser.add_argument('-o', '--output', default='output.root')
-parser.add_argument('--db', default='datasets_hh_c')
-parser.add_argument('--reset', action='store_true', default=False)
-parser.add_argument('--cutflow', default='h_mc_derivation')
-args = parser.parse_args()
 log = logging.getLogger(os.path.basename(__file__))
 
 
@@ -30,7 +23,7 @@ DAOD_CUTFLOW = 'h_mc_derivation'
 def update_merged_file(
         dataset, outfilename,
         treename='NOMINAL',
-        daod_cutflow_name='h_mc_derivation',
+        daod_cutflow_name='h_metadata',
         rm_branches=[]):
 
     log.info('{0} ...'.format(dataset.name))
@@ -40,57 +33,95 @@ def update_merged_file(
         intree.SetBranchStatus(br, 0)
 
     log.info(intree)
-    outdaod = root_open(dataset.files[0])[daod_cutflow_name].Clone()
-    outdaod.Reset()
-    outdaod.name = dataset.name + '_daod'
+    if treename == 'NOMINAL':
+        outdaod = root_open(dataset.files[0])[daod_cutflow_name].Clone()
+        outdaod.Reset()
+        outdaod.name = dataset.name + '_daod'
 
     log.info('merging in %s' % outname)
     with root_open(outname, 'UPDATE') as outfile:
         for f in dataset.files:
             with root_open(f, 'READ') as infile:
-                if daod_cutflow_name in infile:
-                    outdaod += infile[daod_cutflow_name]
-                else:
-                    log.warning('{0} has no {1} histogram'.format(f, daod_cutflow_name))
-                intree.Add(f)
+                if treename == 'NOMINAL':
+                    if daod_cutflow_name in infile:
+                        outdaod += infile[daod_cutflow_name]
+                    else:
+                        log.warning('{0} has no {1} histogram'.format(f, daod_cutflow_name))
+                key_names = [k.name for k in infile.keys()]
+                if treename in key_names:
+                    intree.Add(f)
+        if intree.GetNtrees() != 0:
+            outtree = intree.CloneTree(-1, "fast SortBasketsByEntry")
+            if not outtree:
+                log.warning("Tree has no entries: {0}".format(dataset.name))
+                dummy_tree = root_open(dataset.files[0])[treename]
+                for br in rm_branches:
+                    dummy_tree.SetBranchStatus(br, 0)
+                outtree = dummy_tree.CloneTree()
+            outtree = outtree.CopyTree('selection_met == 1 && selection_delta_r == 1 && selection_delta_eta == 1 && selection_met_centrality == 1')
+            outtree.OptimizeBaskets()
+            outtree.SetName(dataset.name.replace('-', '_'))
+            outfile.cd()
+            if treename=='NOMINAL':
+                outtree.Write(outtree.GetName(), ROOT.TObject.kOverwrite)
+                outdaod.Write(outdaod.GetName(), ROOT.TObject.kOverwrite)
+            else:
+                outtree.Write(outtree.GetName() + '_' + treename, ROOT.TObject.kOverwrite)
+                
+        else:
+            log.warning("File has no tree {0}: {1}".format(treename, dataset.name))
 
-        outtree = intree.CloneTree(-1, "fast SortBasketsByEntry")
-        if not outtree:
-            log.warning("Tree has no entries: {0}".format(dataset.name))
-            dummy_tree = root_open(dataset.files[0])[treename]
-            for br in rm_branches:
-                dummy_tree.SetBranchStatus(br, 0)
-            outtree = dummy_tree.CloneTree()
-        outtree.OptimizeBaskets()
-        outtree.SetName(dataset.name.replace('-', '_'))
-        outfile.cd()
-        outtree.Write(outtree.GetName(), ROOT.TObject.kOverwrite)
-        outdaod.Write(outdaod.GetName(), ROOT.TObject.kOverwrite)
+if __name__ == '__main__':
 
-DB = Database(args.db)
-if args.output is not None:
-    outname = args.output
-else:
-    # this has to be updated
-    outname = '/tmpfs/ntuples_hh_run2/v7/hhskim/hhskim.root'
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument('-o', '--output', default='output.root')
+    parser.add_argument('--db', default='datasets_hh_c')
+    parser.add_argument('--reset', action='store_true', default=False)
+    parser.add_argument('--cutflow', default='h_metadata')
+    parser.add_argument('--systematics', action='store_true', default=False)
+    parser.add_argument('--channel', default='hadhad')
+    parser.add_argument('--year', type=int, default=2015)
+    args = parser.parse_args()
 
-if os.path.exists(outname):
-    if args.reset:
-        log.warning('Deleting %s' % outname)
-        os.remove(outname)
+    DB = Database(args.db)
+    if args.output is not None:
+        outname = args.output
     else:
-        log.warning('Output file already exists!. Set --reset to overwrite')
-        sys.exit()
+        # this has to be updated
+        outname = '/tmpfs/ntuples_hh_run2/v7/hhskim/hhskim.root'
+        
+    if os.path.exists(outname):
+            if args.reset:
+                log.warning('Deleting %s' % outname)
+                os.remove(outname)
+            else:
+                log.warning('Output file already exists!. Set --reset to overwrite')
+                sys.exit()
 
-for d in DB.keys():
-    dataset = DB[d]
-    if len(dataset.files) == 0:
-        log.warning(dataset)
-        continue
-    log.info(dataset)
-    update_merged_file(
-        dataset,
-        outname,
-        treename='NOMINAL',
-        rm_branches=['*_CP_*', 'tau*'])
+    for d in DB.keys():
+        dataset = DB[d]
+        if len(dataset.files) == 0:
+            log.warning(dataset)
+            continue
+        if dataset.category == 'mc15a':
+            continue
+        log.info(dataset)
+        update_merged_file(
+            dataset,
+            outname,
+            treename='NOMINAL',
+            rm_branches=['*_CP_*', 'tau*'])
 
+        if args.systematics:
+            if dataset.datatype == 1:
+                mc_systematics = get_systematics_mc(args.channel, args.year)
+                for syst_tree in mc_systematics:
+                    update_merged_file(
+                        dataset,
+                        outname,
+                        treename=syst_tree[0],
+                        rm_branches=['*_CP_*', 'tau*'])
+
+
+                

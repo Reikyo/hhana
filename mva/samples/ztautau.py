@@ -69,6 +69,9 @@ class Pythia_Ztautau(MC_Ztautau):
     #     return 1., 1., 1.
 
 
+class MG_Ztautau(MC_Ztautau):
+    pass
+
 class Embedded_Ztautau(Ztautau, SystematicsSample):
 
     def __init__(self, *args, **kwargs):
