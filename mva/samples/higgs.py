@@ -209,10 +209,10 @@ class Higgs(MC, Signal):
                 #     self.modes.append(mode)
                 # HACK
                 self.masses.append(125)
-                self.samples.append('PoPy8_ggH125_tautauhh_e3935_s2608_s2183_r6765_r6282_p2524')
+                self.samples.append('PoPy8_ggH125_tautauhh_e3935_s2608_s2183_r7772_r7676_p2666')
                 self.modes.append('gg')
                 self.masses.append(125)
-                self.samples.append('PoPy8_VBFH125_tautauhh_e3888_s2608_s2183_r6765_r6282_p2524')
+                self.samples.append('PoPy8_VBFH125_tautauhh_e3888_s2608_s2183_r7772_r7676_p2666')
                 self.modes.append('VBF')
 
         if len(self.modes) == 1:
