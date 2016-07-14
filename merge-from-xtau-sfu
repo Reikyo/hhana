@@ -58,7 +58,7 @@ def update_merged_file(
                 for br in rm_branches:
                     dummy_tree.SetBranchStatus(br, 0)
                 outtree = dummy_tree.CloneTree()
-            outtree = outtree.CopyTree('selection_met == 1 && selection_delta_r == 1 && selection_delta_eta == 1 && selection_met_centrality == 1')
+            # outtree = outtree.CopyTree('selection_met == 1 && selection_delta_r == 1 && selection_delta_eta == 1 && selection_met_centrality == 1')
             outtree.OptimizeBaskets()
             outtree.SetName(dataset.name.replace('-', '_'))
             outfile.cd()
