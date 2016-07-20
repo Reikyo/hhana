@@ -182,7 +182,7 @@ class Higgs(MC, Signal):
             if suffix is None:
                 suffix = '.mc12a'
             generator_index = 2
-        elif year == 2015:#CHANGED by lspiller
+        elif (year == 2015) or (year == 2016):
             if suffix is None:
                 suffix = ''
             generator_index = 3
@@ -208,11 +208,11 @@ class Higgs(MC, Signal):
                 #     self.masses.append(mass)
                 #     self.modes.append(mode)
                 # HACK
+                # self.masses.append(125)
+                # self.samples.append('PoPy8_ggH125_tautauhh_e3935_s2608_s2183_r7772_r7676_p2666')
+                # self.modes.append('gg')
                 self.masses.append(125)
-                self.samples.append('PoPy8_ggH125_tautauhh_e3935_s2608_s2183_r7772_r7676_p2666')
-                self.modes.append('gg')
-                self.masses.append(125)
-                self.samples.append('PoPy8_VBFH125_tautauhh_e3888_s2608_s2183_r7772_r7676_p2666')
+                self.samples.append('PoPy8_VBFH125_tautauhh')
                 self.modes.append('VBF')
 
         if len(self.modes) == 1:
