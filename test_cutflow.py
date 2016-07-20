@@ -4,11 +4,11 @@ import operator
 from mva.samples import Data
 from mva.samples import Higgs
 from rootpy.tree import Cut
+from mva.categories.hadhad import Category_Preselection
 
-year     = 2015
-year_cut = 2016
-# mode     = 'Data'
-mode     = 'MC'
+year     = 2016
+mode     = 'Data'
+# mode     = 'MC'
 # mode_mc  = 'gg'
 mode_mc  = 'VBF'
 # Weighting only affects MC:
@@ -21,21 +21,21 @@ elif mode == 'MC':
 
 # -------------------------------------------------------------------------------------------------
 
-cuts = []
+cuts = [Cut('')]
 
 # MC ntuple splitting
 if mode == 'MC':
-  if   year_cut == 2015:
+  if   year == 2015:
     cuts.append(Cut('random_run_number <  284485'))
-  elif year_cut == 2016:
+  elif year == 2016:
     cuts.append(Cut('random_run_number >= 284485'))
 # GRL
 if mode == 'Data':
   cuts.append(Cut('grl_pass_run_lb == 1'))
 # Trigger
-if   year_cut == 2015:
+if   year == 2015:
   cuts.append(Cut('HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM == 1'))
-elif year_cut == 2016:
+elif year == 2016:
   cuts.append(Cut('HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo == 1'))
 # Jet trigger
 cuts.append(Cut('(jet_0_pt > 70.0) && (abs(jet_0_eta) < 3.2)')) # okay when fabs changed to abs
@@ -63,10 +63,14 @@ cuts.append(Cut('selection_lepton_veto == 1'))
 # -------------------------------------------------------------------------------------------------
 
 cutflow_output = []
-for i in range(len(cuts)):
-  cutflow_output.append(cutflow_input.events(weighted = weighted, cuts = reduce(operator.and_, cuts[0:i+1]))[1].value)
+# for i in range(len(cuts)):
+#   cutflow_output.append(cutflow_input.events(weighted = weighted, cuts = reduce(operator.and_, cuts[0:i+1]))[1].value)
+cutflow_output.append(cutflow_input.events(weighted = weighted, cuts = reduce(operator.and_, cuts))[1].value)
 for i in cutflow_output:
   print i
+
+print 'From the category:'
+print cutflow_input.events(weighted = weighted, category = Category_Preselection)[1].value
 
 # -------------------------------------------------------------------------------------------------
 

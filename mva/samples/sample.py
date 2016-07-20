@@ -124,14 +124,14 @@ class Sample(object):
                  label='Sample',
                  **hist_decor):
         self.year = year
-        if year == 2011:
+        if   year == 2011:
             self.energy = 7
         elif year == 2012:
             self.energy = 8
-        elif year == 2015:
+        elif (year == 2015) or (year == 2016):
             self.energy = 13
         else:
-            raise RuntimeError('wrong year. choose from 2011, 2012, 2015')
+            raise RuntimeError('wrong year. choose from 2011, 2012, 2015, 2016')
 
         self.scale = scale
         if cuts is None:
@@ -561,14 +561,20 @@ class Sample(object):
         if region is not None:
             cuts &= REGIONS[region]
         if self.trigger:
-            trig_cut = get_trigger(self.channel)
-            #cuts &= trig_cut
+            trig_cut = get_trigger(self.channel, year=self.year)
+            cuts &= trig_cut
             log.info('Trigger: {0}'.format(trig_cut))
-        # from .data import Data
-        # if isinstance(self, Data):
-        #     if self.channel == 'hadhad':
-        #         data_cut = Cut('is_good_grl == 1')
-        #         cuts &= data_cut
+        from .data import Data
+        if   isinstance(self, Data):
+            if self.channel == 'hadhad':
+                data_cut = Cut('grl_pass_run_lb == 1')
+                cuts &= data_cut
+        elif isinstance(self, MC):
+            if self.year == 2015:
+                mc_cut = Cut('random_run_number < 284485')
+            elif self.year == 2016:
+                mc_cut = Cut('random_run_number >= 284485')
+            cuts &= mc_cut
 
         if isinstance(self, SystematicsSample):
             systerm, variation = SystematicsSample.get_sys_term_variation(
@@ -1016,16 +1022,15 @@ class SystematicsSample(Sample):
                 events_bin = 1
             else:
                 # use mc_weighted second bin
-                if year == 2015:
+                if (year == 2015) or (year == 2016):
                     events_bin = 4
                 else:
                     events_bin = 2
 
-            if year == 2015:
+            if (year == 2015) or (year == 2016):
                 events_hist_suffix = '_daod'
             else:
                 events_hist_suffix = '_cutflow'
-
 
             tables['NOMINAL'] =  CachedTable.hook(getattr(
                 h5file.root, treename))
@@ -1345,7 +1350,7 @@ class MC(SystematicsSample):
 
     def weight_systematics(self):
         systematics = super(MC, self).weight_systematics()
-        if self.channel == 'hadhad' and self.year != 2015:
+        if self.channel == 'hadhad' and self.year in (2011, 2012):
             systematics.update({
                     'FAKERATE': {
                         'UP': [
