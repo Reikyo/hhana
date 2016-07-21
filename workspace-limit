@@ -8,7 +8,7 @@ parser.add_argument('file')
 parser.add_argument('workspace')
 args = parser.parse_args()
 
-from statstools import get_limit_workspace
+from hhstat import get_limit_workspace
 from rootpy.io import root_open
 
 with root_open(args.file) as f:

@@ -12,7 +12,7 @@ import mva
 import numpy as np
 import pickle
 
-from statstools.plotting import print_np
+from hhstat.plotting import print_np
 
 ROOT.gROOT.SetBatch()
 

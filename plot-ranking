@@ -14,7 +14,7 @@ from rootpy import ROOT
 from ROOT import TLine, TGaxis, TLatex
 
 # local imports
-from statstools.plotting import get_data, print_np
+from hhstat.plotting import get_data, print_np
 log = logging.getLogger(os.path.basename(__file__))
 
 # set the style
@@ -137,7 +137,7 @@ def plot_ranking(name, file, outdir,
         postfit_graph.SetPoint(i, 0, i)
         prefit_impact_low, prefit_impact_high = prefit
         postfit_impact_low, postfit_impact_high = postfit
-        if np.split('_')[0]=='gamma' or np.split('_')[1]=='norm':
+        if '_' in np and (np.split('_')[0]=='gamma' or np.split('_')[1]=='norm'):
             prefit_impact_low, prefit_impact_high = postfit
             pulls_1sigma.SetPoint(i, mid-1, i)
             pulls.SetPoint(i, mid-1, i)

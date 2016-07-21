@@ -5,7 +5,7 @@ from rootpy.io import root_open
 from rootpy.stats.histfactory import make_workspace, measurements_from_xml
 from rootpy.utils.path import mkdir_p
 from root_numpy import root2array, fill_hist
-from statstools.parallel import run_pool
+from hhstat.parallel import run_pool
 from multiprocessing import Process
 
 

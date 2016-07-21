@@ -6,7 +6,7 @@ from rootpy.io import root_open
 from rootpy.stats import histfactory
 from rootpy.utils.path import mkdir_p
 
-from statstools.histfactory import (
+from hhstat.histfactory import (
     to_uniform_binning, apply_remove_window, is_signal)
 
 from . import log; log = log[__name__]

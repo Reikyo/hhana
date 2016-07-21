@@ -32,7 +32,7 @@ clean-grl:
 	rm -f $(HHNTUP)/merged_grl_12.xml
 
 clean-pyc:                                                                      
-	find mva statstools -name "*.pyc" -exec rm {} \;
+	find mva -name "*.pyc" -exec rm {} \;
 
 clean: clean-pyc
 

@@ -14,7 +14,7 @@ from rootpy import ROOT
 from ROOT import TLine
 
 #local imports
-from statstools.plotting import parse_name, get_category, get_data, print_np
+from hhstat.plotting import parse_name, get_category, get_data, print_np
 
 log = logging.getLogger(os.path.basename(__file__))
 

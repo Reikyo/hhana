@@ -5,7 +5,7 @@ import pickle
 # root/rootpy imports
 from rootpy.extern.ordereddict import OrderedDict
 # local imports
-from statstools.ufloat import ufloat
+from hhstat.ufloat import ufloat
 from mva import log
 # -------------------------------------
 def get_table_template():

@@ -10,7 +10,7 @@ parser.add_argument('file')
 parser.add_argument('workspace')
 args = parser.parse_args()
 
-from statstools.significance import significance
+from hhstat.significance import significance
 from rootpy.io import root_open
 
 with root_open(args.file) as f:

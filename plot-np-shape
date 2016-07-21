@@ -13,8 +13,8 @@ from rootpy.plotting.utils import get_band
 from rootpy.utils.path import mkdir_p
 
 # local imports
-from statstools.fixups import find_measurements
-from statstools import log; log = log['plot-np-shape']
+from hhstat.fixups import find_measurements
+from hhstat import log; log = log['plot-np-shape']
 from mva.plotting.templates import RatioPlot
 from mva import save_canvas
 

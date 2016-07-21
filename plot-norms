@@ -6,7 +6,7 @@ from rootpy.io import root_open
 from rootpy.plotting.contrib import plot_corrcoef_matrix
 from rootpy.utils.path import mkdir_p
 from rootpy.extern.argparse import ArgumentParser
-from statstools.asimov import make_asimov_data
+from hhstat.asimov import make_asimov_data
 from root_numpy import matrix
 import numpy as np
 import matplotlib.pyplot as plt

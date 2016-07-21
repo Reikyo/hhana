@@ -21,7 +21,7 @@ args.symmetrize = args.symmetrize or args.symmetrize_partial
 if args.remove_window is not None:
     args.remove_window = map(float, args.remove_window.split(','))
 
-from statstools.fixups import fix
+from hhstat.fixups import fix
 
 fix(args.paths, n_jobs=args.jobs,
     suffix=args.suffix, verbose=not args.quiet,

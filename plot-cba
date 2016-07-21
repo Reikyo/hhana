@@ -6,7 +6,7 @@ from mva.analysis import Analysis
 from mva.plotting import draw_channel
 from rootpy.plotting import Hist
 from mva.variables import get_label, get_units
-from statstools.histfactory import matched, apply_fill_empties, is_signal
+from hhstat.histfactory import matched, apply_fill_empties, is_signal
 import ROOT
 
 

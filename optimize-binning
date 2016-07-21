@@ -18,9 +18,9 @@ from mva.samples import QCD, Ztautau
 from mva.analysis import Analysis
 from mva.defaults import TARGET_REGION
 
-from statstools.fixups import fix_measurement
-from statstools.significance import significance
-from statstools.parallel import map_pool, FuncWorker
+from hhstat.fixups import fix_measurement
+from hhstat.significance import significance
+from hhstat.parallel import map_pool, FuncWorker
 
 
 def get_workspace(scores, binning,

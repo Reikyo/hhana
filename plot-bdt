@@ -24,8 +24,8 @@ from mva.massregions import MassRegions
 from mva.analysis import get_analysis
 from mva.defaults import TARGET_REGION
 
-from statstools.histfactory import uniform_channel
-from statstools.utils import efficiency_cut
+from hhstat.histfactory import uniform_channel
+from hhstat.utils import efficiency_cut
 
 
 SYSTEMATICS = get_systematics(year)

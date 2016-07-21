@@ -30,7 +30,7 @@ from mva.categories.hadhad.cb import (Category_Cuts_VBF_HighDR_Tight,
                                       Category_Cuts_VBF)
 from mva.categories.hadhad.cb import (Category_Cuts_Boosted_Tight,
                                       Category_Cuts_Boosted_Loose)
-from statstools.ufloat import ufloat
+from hhstat.ufloat import ufloat
 
 analysis = get_analysis(args)
 output_suffix = analysis.get_suffix()

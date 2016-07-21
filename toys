@@ -2,8 +2,8 @@
 
 from rootpy.io import root_open
 
-from statstools.asimov import make_asimov_data
-from statstools.parallel import Worker, run_pool 
+from hhstat.asimov import make_asimov_data
+from hhstat.parallel import Worker, run_pool 
 from root_numpy import matrix
 
 

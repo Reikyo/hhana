@@ -26,13 +26,13 @@ from mva.plotting.templates import RatioPlot
 from mva.plotting.utils import legend_params, label_plot
 from mva.variables import get_label
 
-from statstools.fitresult import Prefit_RooFitResult
-from statstools.postfit import FitModel, ModelCalculator
-from statstools.parallel import run_pool
-from statstools.plotting import (get_uncertainty_graph, parse_name,
-                                 get_category, get_binning, get_blinding,
-                                 get_rebinned_graph, get_rebinned_hist,
-                                 blind_graph, make_density)
+from hhstat.fitresult import Prefit_RooFitResult
+from hhstat.postfit import FitModel, ModelCalculator
+from hhstat.parallel import run_pool
+from hhstat.plotting import (get_uncertainty_graph, parse_name,
+                             get_category, get_binning, get_blinding,
+                             get_rebinned_graph, get_rebinned_hist,
+                             blind_graph, make_density)
 
 log = logging.getLogger(os.path.basename(__file__))
 

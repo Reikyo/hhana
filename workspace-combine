@@ -27,7 +27,7 @@ if os.path.exists(xml_path):
 from rootpy.stats.histfactory import (
     measurements_from_xml, write_measurement,
     make_measurement)
-from statstools.fixups import find_measurements
+from hhstat.fixups import find_measurements
 
 # get measurements
 measurements = []

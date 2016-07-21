@@ -78,7 +78,7 @@ if __name__ == '__main__':
     parser.add_argument('files', nargs='+')
     args = parser.parse_args()
 
-    from statstools.parallel import run_pool
+    from hhstat.parallel import run_pool
     
     jobs = [Job(f) for f in args.files]
     run_pool(jobs, n_jobs=-1)

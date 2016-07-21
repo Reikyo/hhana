@@ -21,7 +21,7 @@ from .categories.hadhad import CATEGORIES
 from .classify import histogram_scores, Classifier
 from .defaults import (
     TRAIN_FAKES_REGION, FAKES_REGION, TARGET_REGION, NORM_FIELD)
-from statstools.utils import efficiency_cut
+from hhstat.utils import efficiency_cut
 
 
 Scores = namedtuple('Scores', [

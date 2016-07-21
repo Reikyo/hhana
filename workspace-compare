@@ -11,9 +11,9 @@ parser.add_argument('--unblind', action='store_true', default=False)
 parser.add_argument('files', nargs='+')
 args = parser.parse_args()
 
-from statstools.significance import SignificanceWorker
-from statstools.asimov import make_asimov_data
-from statstools.parallel import map_pool_kwargs, Worker
+from hhstat.significance import SignificanceWorker
+from hhstat.asimov import make_asimov_data
+from hhstat.parallel import map_pool_kwargs, Worker
 from tabulate import tabulate
 
 

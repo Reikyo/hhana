@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from statstools.parallel import run_pool
-from statstools.significance import SignificanceWorker
+from hhstat.parallel import run_pool
+from hhstat.significance import SignificanceWorker
 import os
 
 
