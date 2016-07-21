@@ -7,12 +7,12 @@ from rootpy.tree import Cut
 from mva.categories.hadhad import Category_Preselection
 
 year     = 2016
-mode     = 'Data'
-# mode     = 'MC'
+# mode     = 'Data'
+mode     = 'MC'
 # mode_mc  = 'gg'
 mode_mc  = 'VBF'
 # Weighting only affects MC:
-weighted = False
+weighted = True
 
 if   mode == 'Data':
   cutflow_input = Data(year)
@@ -21,46 +21,118 @@ elif mode == 'MC':
 
 # -------------------------------------------------------------------------------------------------
 
-cuts = [Cut('')]
+# Preselection:
+
+cuts_preselection = []
 
 # MC ntuple splitting
 if mode == 'MC':
   if   year == 2015:
-    cuts.append(Cut('random_run_number <  284485'))
+    cuts_preselection.append(Cut('random_run_number <  284485'))
   elif year == 2016:
-    cuts.append(Cut('random_run_number >= 284485'))
+    cuts_preselection.append(Cut('random_run_number >= 284485'))
 # GRL
 if mode == 'Data':
-  cuts.append(Cut('grl_pass_run_lb == 1'))
+  cuts_preselection.append(Cut('grl_pass_run_lb == 1'))
 # Trigger
 if   year == 2015:
-  cuts.append(Cut('HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM == 1'))
+  cuts_preselection.append(Cut('HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM == 1'))
 elif year == 2016:
-  cuts.append(Cut('HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo == 1'))
+  cuts_preselection.append(Cut('HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo == 1'))
 # Jet trigger
-cuts.append(Cut('(jet_0_pt > 70.0) && (abs(jet_0_eta) < 3.2)')) # okay when fabs changed to abs
+cuts_preselection.append(Cut('(jet_0_pt > 70.0) && (abs(jet_0_eta) < 3.2)')) # okay when fabs changed to abs
 # Charge
-cuts.append(Cut('(abs(ditau_tau0_q) == 1) && (abs(ditau_tau1_q) == 1)'))
+cuts_preselection.append(Cut('(abs(ditau_tau0_q) == 1) && (abs(ditau_tau1_q) == 1)'))
 # ntracks
-cuts.append(Cut('((ditau_tau0_n_tracks == 1) || (ditau_tau0_n_tracks == 3)) && ((ditau_tau1_n_tracks == 1) || (ditau_tau1_n_tracks == 3))')) # okay when more brackets added
+cuts_preselection.append(Cut(   '((ditau_tau0_n_tracks == 1) || (ditau_tau0_n_tracks == 3)) ' +
+                             '&& ((ditau_tau1_n_tracks == 1) || (ditau_tau1_n_tracks == 3))')) # okay when more brackets added
 # Tau ID
-cuts.append(Cut('(n_taus_medium == 2) & (n_taus_tight >= 1) && (ditau_tau0_jet_bdt_medium == 1) && (ditau_tau1_jet_bdt_medium == 1)')) # okay when "==1" added for last two conditions
+cuts_preselection.append(Cut(   '(n_taus_medium == 2) && (n_taus_tight >= 1) ' +
+                             '&& (ditau_tau0_jet_bdt_medium == 1) && (ditau_tau1_jet_bdt_medium == 1)')) # okay when "==1" added for last two conditions
 # Tau pT
-cuts.append(Cut('(ditau_tau0_pt > 40) && (ditau_tau1_pt > 30)'))
+cuts_preselection.append(Cut('(ditau_tau0_pt > 40) && (ditau_tau1_pt > 30)'))
 # OS
-cuts.append(Cut('selection_opposite_sign == 1'))
+cuts_preselection.append(Cut('selection_opposite_sign == 1'))
 # MET
-cuts.append(Cut('selection_met == 1'))
+cuts_preselection.append(Cut('selection_met == 1'))
 # MET centrality
-cuts.append(Cut('selection_met_centrality == 1'))
+cuts_preselection.append(Cut('selection_met_centrality == 1'))
 # deta
-cuts.append(Cut('selection_delta_eta == 1'))
+cuts_preselection.append(Cut('selection_delta_eta == 1'))
 # dr
-cuts.append(Cut('selection_delta_r == 1'))
+cuts_preselection.append(Cut('selection_delta_r == 1'))
 # Lepton veto (no BDT)
-cuts.append(Cut('selection_lepton_veto == 1'))
+cuts_preselection.append(Cut('selection_lepton_veto == 1'))
 
 # -------------------------------------------------------------------------------------------------
+
+# Cut-Based VBF:
+
+cuts_cutbased_vbf = []
+
+# Sublead Jet
+cuts_cutbased_vbf.append(Cut('jet_1_pt > 30'))
+# Mjj
+cuts_cutbased_vbf.append(Cut('dijet_vis_mass > 300'))
+# Delta Eta Jets
+cuts_cutbased_vbf.append(Cut('dijet_deta > 3.0'))
+# Eta Product
+cuts_cutbased_vbf.append(Cut(   '((jet_0_eta < 0) && (jet_1_eta > 0)) ' +
+                             '|| ((jet_0_eta > 0) && (jet_1_eta < 0))'))
+# Tau 1 Topology
+cuts_cutbased_vbf.append(Cut(   '((jet_0_eta < ditau_tau0_eta) && (ditau_tau0_eta < jet_1_eta)) ' +
+                             '|| ((jet_1_eta < ditau_tau0_eta) && (ditau_tau0_eta < jet_0_eta))'))
+# Tau 2 Topology
+cuts_cutbased_vbf.append(Cut(   '((jet_0_eta < ditau_tau1_eta) && (ditau_tau1_eta < jet_1_eta)) ' +
+                             '|| ((jet_1_eta < ditau_tau1_eta) && (ditau_tau1_eta < jet_0_eta))'))
+# Delta Eta Taus
+cuts_cutbased_vbf.append(Cut('ditau_deta < 1.5'))
+
+# VBF Cut-Based HighPT
+HH16_VBF_LOWDR         = Cut('(ditau_higgs_pt >= 140) && (ditau_dr <= 1.5)')
+
+HH16_VBF_HIGHDR_DITAU  = Cut('(ditau_higgs_pt <  140) || (ditau_dr >  1.5)')
+HH16_VBF_HIGHDR_DIJET1 = Cut('dijet_vis_mass > (-250 * dijet_deta + 1550)')
+HH16_VBF_HIGHDR_DIJET2 = Cut('dijet_vis_mass < (-250 * dijet_deta + 1550)')
+# VBF Cut-Based LowPT - Tight
+HH16_VBF_HIGHDR_TIGHT  = HH16_VBF_HIGHDR_DITAU & HH16_VBF_HIGHDR_DIJET1
+# VBF Cut-Based LowPT - Loose
+HH16_VBF_HIGHDR_LOOSE  = HH16_VBF_HIGHDR_DITAU & HH16_VBF_HIGHDR_DIJET2
+
+HH16_CBA_VBF           = HH16_VBF_LOWDR | HH16_VBF_HIGHDR_TIGHT | HH16_VBF_HIGHDR_LOOSE
+
+# -------------------------------------------------------------------------------------------------
+
+# Cut-Based Boosted:
+
+cuts_cutbased_boosted = []
+
+# Higgs pT
+cuts_cutbased_boosted.append(Cut('ditau_higgs_pt > 100'))
+# Delta Eta Taus
+cuts_cutbased_boosted.append(Cut('ditau_deta < 1.5'))
+
+# Boosted Cut-Based High PT
+HH16_BOOST_TIGHT = Cut('(ditau_higgs_pt >= 140) && (ditau_dr <= 1.5)')
+# Boosted Cut-Based Low PT
+HH16_BOOST_LOOSE = Cut('(ditau_higgs_pt <  140) || (ditau_dr >  1.5)')
+
+HH16_CBA_BOOST   = HH16_BOOST_TIGHT | HH16_BOOST_LOOSE
+
+# -------------------------------------------------------------------------------------------------
+
+                                                   # 2015             2016
+# cuts_cutbased_vbf.append(HH16_CBA_VBF)           # 1.8114967346     4.3541994094   3.81
+# cuts_cutbased_vbf.append(HH16_VBF_LOWDR)         # 1.0301972627     2.4898321628   2.18
+# cuts_cutbased_vbf.append(HH16_VBF_HIGHDR_TIGHT)  # 0.5888065695     1.4254974126   1.25
+# cuts_cutbased_vbf.append(HH16_VBF_HIGHDR_LOOSE)  # 0.1924895048     0.4389009475   0.38
+# cuts = cuts_preselection + cuts_cutbased_vbf
+
+                                                   # 2015             2016
+# cuts_cutbased_boosted.append(HH16_CBA_BOOST)     # 3.2805538177     8.0066175460   3.57
+# cuts_cutbased_boosted.append(HH16_BOOST_TIGHT)   # 1.9652493        4.7694296836   2.00
+# cuts_cutbased_boosted.append(HH16_BOOST_LOOSE)   # 1.3153077364     3.2377154827   1.58
+# cuts = cuts_preselection + cuts_cutbased_boosted
 
 cutflow_output = []
 # for i in range(len(cuts)):
@@ -193,3 +265,14 @@ print cutflow_input.events(weighted = weighted, category = Category_Preselection
 # print cut8_out
 # print cut9_out
 # print cut10_out
+
+# -------------------------------------------------------------------------------------------------
+
+                                                   # 2015        2016
+# cuts = cuts_preselection + HH16_CBA_VBF          # 3.76988     9.19315
+# cuts = cuts_preselection + HH16_VBF_LOWDR        # 1.96524     4.76942
+# cuts = cuts_preselection + HH16_VBF_HIGHDR_TIGHT # 0.71506     1.78096
+# cuts = cuts_preselection + HH16_VBF_HIGHDR_LOOSE # 1.08957     2.64284
+# cuts = cuts_preselection + HH16_CBA_BOOST        # 3.76988     9.19315
+# cuts = cuts_preselection + HH16_BOOST_TIGHT      # 1.96524     4.76942
+# cuts = cuts_preselection + HH16_BOOST_LOOSE      # 1.80464     4.42376
