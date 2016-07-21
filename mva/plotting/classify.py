@@ -7,7 +7,7 @@ from . import log
 from ..variables import VARIABLES, HH_VARIABLES
 from .. import PLOTS_DIR
 from .draw import draw
-from statstools.utils import efficiency_cut, significance
+from hhstat.utils import efficiency_cut, significance
 
 # matplotlib imports
 from matplotlib import cm
