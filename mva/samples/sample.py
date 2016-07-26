@@ -131,7 +131,7 @@ class Sample(object):
         elif (year == 2015) or (year == 2016):
             self.energy = 13
         else:
-            raise RuntimeError('wrong year. choose from 2011, 2012, 2015, 2016')
+            raise RuntimeError('Wrong year. Choose from 2011, 2012, 2015, 2016.')
 
         self.scale = scale
         if cuts is None:
@@ -255,6 +255,7 @@ class Sample(object):
                              max_score=max_score,
                              inplace=True)
             return field_hist
+
         rec, weights = self.draw_array(
             field_hist, category, region,
             cuts=cuts,
@@ -872,40 +873,24 @@ class SystematicsSample(Sample):
 
     def systematics_components(self):
         common = [
-            'MET_RESOSOFTTERMS',
-            'MET_SCALESOFTTERMS',
             'TAU_ID',
             'TRIGGER',
+            'TAU_RECO',
+            'TAU_ELEOLR',
         ]
         if self.channel == 'lephad':
-            log.warning('Incomplete list of SF !')
+            log.warning('Incomplete list of SF!')
             return ['LEP_ID']
-
         else:
             # No FAKERATE for embedding since fakes are data
             # so don't include FAKERATE here
             if self.year == 2011:
-                return common + [
-                    'TES_TRUE_FINAL',
-                    'TES_FAKE_FINAL',
-                    ]
+                raise ValueError('2011 is not supported anymore')
             elif self.year == 2012:
-                return common + [
-                    'TAU_ID_STAT',
-                    'TES_TRUE_INSITUINTERPOL',
-                    'TES_TRUE_SINGLEPARTICLEINTERPOL',
-                    'TES_TRUE_MODELING',
-                    'TES_FAKE_TOTAL',
-                    'TRIGGER_STAT_PERIODA',
-                    'TRIGGER_STAT_PERIODBD_BARREL',
-                    'TRIGGER_STAT_PERIODBD_ENDCAP',
-                    'TRIGGER_STAT_PERIODEM_BARREL',
-                    'TRIGGER_STAT_PERIODEM_ENDCAP',
-                    ]
+                raise ValueError('2012 is not supported anymore')
             else:
-                log.warning('Incomplete list of SF !')
-                return ['TAU_ID']
-
+                log.warning('SF scheme needs to be updated !')
+                return common
 
     def weight_systematics(self):
         systematics = {}
@@ -943,17 +928,16 @@ class SystematicsSample(Sample):
                                 'tau1_id_sf',
                                 'tau2_id_sf']},
                         }
-                else:
+                elif (self.year == 2015) or (self.year == 2016):
                     tauid = {
                         'TAU_ID': {
-                            'STAT_UP': [],
-                            'STAT_DOWN': [],
-                            'UP': [],
-                            'DOWN': [],
-                            'NOMINAL': []},
-                               # 'ditau_tau0_ele_bdt_medium_eff_sf',
-                               # 'ditau_tau1_ele_bdt_medium_eff_sf']},
+                            'NOMINAL': [
+                                'ditau_tau0_sf_NOMINAL_TAU_EFF_JETIDBDTMEDIUM',
+                                'ditau_tau1_sf_NOMINAL_TAU_EFF_JETIDBDTMEDIUM']},
                         }
+                else:
+                    raise ValueError('year {0} is not supported'.format(
+                    self.year))
             elif self.channel == 'lephad':
                 if self.year == 2011:
                     log.error('lephad is not implemented for 2011')
@@ -967,7 +951,6 @@ class SystematicsSample(Sample):
                             'NOMINAL': ['tau_0_jet_id_medium_sf'],},
                         }
             systematics.update(tauid)
-
         return systematics
 
     def cut_systematics(self):
@@ -990,7 +973,6 @@ class SystematicsSample(Sample):
             # samples already defined in Signal subclass
             # see Higgs class below
             assert len(self.samples) > 0
-
         else:
             raise TypeError(
                 'MC sample %s does not inherit from Signal or Background' %
@@ -1139,8 +1121,8 @@ class SystematicsSample(Sample):
             all_sys_hists[field] = hist.systematics
 
         for systematic in iter_systematics(False,
-                year=self.year,
-                components=systematics_components):
+            year=self.year,
+            components=systematics_components):
 
             sys_field_hist = {}
             for field, hist in field_hist.items():
@@ -1178,8 +1160,8 @@ class SystematicsSample(Sample):
         if scores_dict is None:
             scores_dict = {}
         for systematic in iter_systematics(True,
-                year=self.year,
-                components=systematics_components):
+            year=self.year,
+            components=systematics_components):
             if not do_systematics and systematic != 'NOMINAL':
                 continue
             scores, weights = clf.classify(self,
@@ -1363,13 +1345,6 @@ class MC(SystematicsSample):
                             'tau1_fakerate_sf',
                             'tau2_fakerate_sf']},
                     })
-        if self.pileup_weight:
-            systematics.update({
-                'PU_RESCALE': {
-                    'UP': ['pileup_weight_high'],
-                    'DOWN': ['pileup_weight_low'],
-                    'NOMINAL': ['']},
-                })
         if self.channel == 'hadhad':
             if self.year == 2011:
                 systematics.update({
@@ -1427,14 +1402,24 @@ class MC(SystematicsSample):
                                 'tau1_trigger_sf_stat_scale_PeriodEM_EndCap_low',
                                 'tau2_trigger_sf_stat_scale_PeriodEM_EndCap_low'],
                             'NOMINAL': []}})
-            else:
-                log.warning('No trigger scale factor for 2015 yet')
+            elif (self.year == 2015) or (self.year == 2016):
                 systematics.update({
                         'TRIGGER': {
-                            'UP': [],
-                            'DOWN': [],
-                            'NOMINAL': []},
-                        })
+                            'NOMINAL': [
+                                'ditau_tau0_sf_NOMINAL_effSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM',
+                                'ditau_tau1_sf_NOMINAL_effSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM']},
+                        'TAU_RECO': {
+                            'NOMINAL': [
+                                'ditau_tau0_sf_NOMINAL_TAU_EFF_RECO',
+                                'ditau_tau1_sf_NOMINAL_TAU_EFF_RECO']},
+                        'TAU_ELEOLR': {
+                            'NOMINAL': [
+                                'ditau_tau0_sf_NOMINAL_effSF_MediumLlhEleOLR_electron',
+                                'ditau_tau1_sf_NOMINAL_effSF_MediumLlhEleOLR_electron']},
+                })
+            else:
+                raise ValueError('year = {0} is not supported'.format(
+                    self.year))
         return systematics
 
 
