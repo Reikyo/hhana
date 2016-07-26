@@ -34,6 +34,7 @@ from .. import NTUPLE_PATH, DEFAULT_STUDENT, ETC_DIR, CACHE_DIR
 from ..utils import print_hist, ravel_hist, uniform_hist
 from ..classify import histogram_scores, Classifier
 from ..regions import REGIONS
+from ..scalefactors import tauid_sf, trigger_sf
 from ..systematics import (
     get_systematics, SYSTEMATICS_BY_WEIGHT,
     iter_systematics, systematic_name)
@@ -873,7 +874,6 @@ class SystematicsSample(Sample):
 
     def systematics_components(self):
         common = [
-            'TAU_ID',
             'TRIGGER',
             'TAU_RECO',
             'TAU_ELEOLR',
@@ -895,50 +895,7 @@ class SystematicsSample(Sample):
     def weight_systematics(self):
         systematics = {}
         if self.tau_id_sf:
-            if self.channel == 'hadhad':
-                if self.year == 2011:
-                    tauid = {
-                        'TAU_ID': {
-                            'UP': [
-                                'tau1_id_sf_high',
-                                'tau2_id_sf_high'],
-                            'DOWN': [
-                                'tau1_id_sf_low',
-                                'tau2_id_sf_low'],
-                            'NOMINAL': [
-                                'tau1_id_sf',
-                                'tau2_id_sf']}
-                        }
-                elif self.year == 2012:
-                    tauid = {
-                        'TAU_ID': {
-                            'STAT_UP': [
-                                'tau1_id_sf_stat_high',
-                                'tau2_id_sf_stat_high'],
-                            'STAT_DOWN': [
-                                'tau1_id_sf_stat_low',
-                                'tau2_id_sf_stat_low'],
-                            'UP': [
-                                'tau1_id_sf_sys_high',
-                                'tau2_id_sf_sys_high'],
-                            'DOWN': [
-                                'tau1_id_sf_sys_low',
-                                'tau2_id_sf_sys_low'],
-                            'NOMINAL': [
-                                'tau1_id_sf',
-                                'tau2_id_sf']},
-                        }
-                elif (self.year == 2015) or (self.year == 2016):
-                    tauid = {
-                        'TAU_ID': {
-                            'NOMINAL': [
-                                'ditau_tau0_sf_NOMINAL_TAU_EFF_JETIDBDTMEDIUM',
-                                'ditau_tau1_sf_NOMINAL_TAU_EFF_JETIDBDTMEDIUM']},
-                        }
-                else:
-                    raise ValueError('year {0} is not supported'.format(
-                    self.year))
-            elif self.channel == 'lephad':
+            if self.channel == 'lephad':
                 if self.year == 2011:
                     log.error('lephad is not implemented for 2011')
                     raise RuntimeError
@@ -950,7 +907,7 @@ class SystematicsSample(Sample):
                         'TAU_ID': {
                             'NOMINAL': ['tau_0_jet_id_medium_sf'],},
                         }
-            systematics.update(tauid)
+                    systematics.update(tauid)
         return systematics
 
     def cut_systematics(self):
@@ -1270,6 +1227,19 @@ class SystematicsSample(Sample):
                     weights_el = reduce(np.multiply, [rec['lep_isele'], rec['lep_0_id_eff_sf_tight']])
                     weights_mu = reduce(np.multiply, [rec['lep_ismu'], rec['lep_0_id_eff_sf_loose']])
                     weights *= reduce(np.add, [weights_el, weights_mu])
+
+                if self.channel == 'hadhad' and self.tau_id_sf:
+                    log.debug('compute tauid SF')
+                    # need to propagate the syst. uncert
+                    id_weights = tauid_sf(rec, systematic='NOMINAL')
+                    weights *= id_weights
+                    
+                if self.channel == 'hadhad' and self.trigger:
+                    log.debug('compute trigger SF')
+                    # need to propagate the syst. uncert
+                    trig_weights = trigger_sf(rec, systematic='NOMINAL')
+                    weights *= trig_weights
+
 
                 # drop other weight fields
                 #rec = recfunctions.rec_drop_fields(rec, weight_branches)
