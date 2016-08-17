@@ -27,7 +27,7 @@ DETA_TAUS = Cut('ditau_deta < 1.5')
 CUTS_VBF_CUTBASED = (
       JET_SUBLEAD
     & MJJ
-    & DETA_JETS_CBVBF # ??? Name okay, change to DETA_JETS now this has been commented above ???
+    & DETA_JETS_CBVBF # ??? Name okay, change to DETA_JETS now this has been removed above ???
     & ETA_PRODUCT
     & TAU0_TOPO
     & TAU1_TOPO
@@ -136,8 +136,7 @@ class Category_Cuts_VBF_CR(Category_Preselection):
 
 # Cut-Based Boosted:
 
-HIGGS_PT = Cut('ditau_higgs_pt >= 100')
-DETA_TAUS = Cut('ditau_deta <= 1.5')
+HIGGS_PT = Cut('ditau_higgs_pt > 100')
 CUTS_BOOSTED_CUTBASED = (
     HIGGS_PT
   & DETA_TAUS)
@@ -146,7 +145,9 @@ class Category_Cuts_Boosted_Preselection(Category_Preselection):
     name = 'cuts_boosted_preselection'
     label = '#tau_{had}#tau_{had} CB Boosted Preselection'
     latex = '\\textbf{Boosted Preselection}'
-    cuts = CUTS_BOOSTED_CUTBASED
+    cuts = (
+         -Category_Cuts_VBF.cuts
+        & CUTS_BOOSTED_CUTBASED)
     norm_category = Category_Preselection
 
 class Category_Cuts_Boosted_Tight(Category_Preselection):
@@ -157,7 +158,8 @@ class Category_Cuts_Boosted_Tight(Category_Preselection):
     linestyle = 'verylongdashdot'
     jk_number = 6
     cuts = (
-          CUTS_BOOSTED_CUTBASED
+         -Category_Cuts_VBF.cuts
+        & CUTS_BOOSTED_CUTBASED
         & Cut('(ditau_higgs_pt >= 140) && (ditau_dr <= 1.5)'))
     cuts_truth = (
           CUTS_TRUE_BOOSTED
@@ -176,7 +178,7 @@ class Category_Cuts_Boosted_Tight_NoDRCut(Category_Preselection):
     label = '#tau_{had}#tau_{had} CB Boosted Tight No dR Cut'
     latex = '\\textbf{Boosted Tight No dR Cut}'
     cuts = (
-        (-CUTS_VBF_CUTBASED)
+         -Category_Cuts_VBF.cuts
         & CUTS_BOOSTED_CUTBASED
         & Cut('resonance_pt > 140000'))
     norm_category = Category_Preselection
@@ -189,7 +191,8 @@ class Category_Cuts_Boosted_Loose(Category_Preselection):
     linestyle = 'dotted'
     jk_number = 5
     cuts = (
-          CUTS_BOOSTED_CUTBASED
+         -Category_Cuts_VBF.cuts
+        & CUTS_BOOSTED_CUTBASED
         & Cut('(ditau_higgs_pt < 140) || (ditau_dr > 1.5)'))
     cuts_truth = (
           CUTS_TRUE_BOOSTED

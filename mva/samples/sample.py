@@ -1384,8 +1384,8 @@ class MC(SystematicsSample):
                                 'ditau_tau1_sf_NOMINAL_TAU_EFF_RECO']},
                         'TAU_ELEOLR': {
                             'NOMINAL': [
-                                'ditau_tau0_sf_NOMINAL_effSF_MediumLlhEleOLR_electron',
-                                'ditau_tau1_sf_NOMINAL_effSF_MediumLlhEleOLR_electron']},
+                                'ditau_tau0_sf_NOMINAL_effSF_VeryLooseLlhEleOLR_electron',
+                                'ditau_tau1_sf_NOMINAL_effSF_VeryLooseLlhEleOLR_electron']},
                 })
             else:
                 raise ValueError('year = {0} is not supported'.format(

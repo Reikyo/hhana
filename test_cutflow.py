@@ -133,18 +133,17 @@ HH16_CBA_BOOST   = HH16_BOOST_TIGHT | HH16_BOOST_LOOSE
 
 cuts = cuts_preselection
 
-                                                   # 2015 MC          2016 MC        Eric   2016 Data   Eric
-# cuts_cutbased_vbf.append(HH16_CBA_VBF)           # 1.8114967346     4.3541994094   3.81   200.0       200.0
-# cuts_cutbased_vbf.append(HH16_VBF_LOWDR)         # 1.0301972627     2.4898321628   2.18   60.0        60.0
-# cuts_cutbased_vbf.append(HH16_VBF_HIGHDR_TIGHT)  # 0.5888065695     1.4254974126   1.25   71.0        71.0
-# cuts_cutbased_vbf.append(HH16_VBF_HIGHDR_LOOSE)  # 0.1924895048     0.4389009475   0.38   69.0        69.0
-# cuts = cuts + cuts_cutbased_vbf
+                                                   # 2015 MC          2016 MC 1      2016 MC 2      2016 MC 3      TWiki  2016 Data 1   2016 Data 2   TWiki
+                                                   #                                 9.4663028717   9.4664030075   8.05   3690          3690          3690
+# cuts_cutbased_vbf.append(HH16_CBA_VBF)           # 1.8114967346     4.3541994094   4.4833865165   4.4833865165   3.81    200           200           200
+# cuts_cutbased_vbf.append(HH16_VBF_LOWDR)         # 1.0301972627     2.4898321628   2.5637075901   2.5637075901   2.18     60            60            60
+# cuts_cutbased_vbf.append(HH16_VBF_HIGHDR_TIGHT)  # 0.5888065695     1.4254974126   1.4677808284   1.4677808284   1.25     71            71            71
+# cuts_cutbased_vbf.append(HH16_VBF_HIGHDR_LOOSE)  # 0.1924895048     0.4389009475   0.4518596231   0.4518596231   0.38     69            69            69
+# cuts_cutbased_boosted.append(HH16_CBA_BOOST)     # 3.2805538177     8.0066175460   8.2450389862   4.2035040855   3.57   2526          2378          2378
+# cuts_cutbased_boosted.append(HH16_BOOST_TIGHT)   # 1.9652493        4.7694296836   4.9111442565   2.3474190235   2.00    934           874           874
+# cuts_cutbased_boosted.append(HH16_BOOST_LOOSE)   # 1.3153077364     3.2377154827   3.3339385986   1.8560403585   1.58   1592          1504          1504
 
-# email Eric about the following mismatch in 2016 data:
-                                                   # 2015 MC          2016 MC        Eric   2016 Data   Eric
-# cuts_cutbased_boosted.append(HH16_CBA_BOOST)     # 3.2805538177     8.0066175460   3.57   2526.0      2378.00
-# cuts_cutbased_boosted.append(HH16_BOOST_TIGHT)   # 1.9652493        4.7694296836   2.00   934.0       874.0
-# cuts_cutbased_boosted.append(HH16_BOOST_LOOSE)   # 1.3153077364     3.2377154827   1.58   1592.0      1504.0
+# cuts = cuts + cuts_cutbased_vbf
 # cuts = cuts + cuts_cutbased_boosted
 
 cutflow_output = []
@@ -156,13 +155,13 @@ for i in cutflow_output:
 
 print 'From the category:'
 print cutflow_input.events(weighted = weighted, category = Category_Preselection)[1].value
-print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF)[1].value
-print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF_LowDR)[1].value
-print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF_HighDR_Tight)[1].value
-print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF_HighDR_Loose)[1].value
-print cutflow_input.events(weighted = weighted, category = Category_Cuts_Boosted)[1].value
-print cutflow_input.events(weighted = weighted, category = Category_Cuts_Boosted_Tight)[1].value
-print cutflow_input.events(weighted = weighted, category = Category_Cuts_Boosted_Loose)[1].value
+# print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF)[1].value
+# print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF_LowDR)[1].value
+# print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF_HighDR_Tight)[1].value
+# print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF_HighDR_Loose)[1].value
+# print cutflow_input.events(weighted = weighted, category = Category_Cuts_Boosted)[1].value
+# print cutflow_input.events(weighted = weighted, category = Category_Cuts_Boosted_Tight)[1].value
+# print cutflow_input.events(weighted = weighted, category = Category_Cuts_Boosted_Loose)[1].value
 
 # -------------------------------------------------------------------------------------------------
 
