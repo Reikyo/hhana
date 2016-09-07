@@ -32,7 +32,7 @@ TRACK_NONISOLATION = (
 
 
 TAU1_LOOSE = Cut('ditau_tau0_jet_bdt_loose==1')
-TAU1_MEDIUM = Cut('ditau_tau1_jet_bdt_medium==1')
+TAU1_MEDIUM = Cut('ditau_tau0_jet_bdt_medium==1')
 TAU1_TIGHT = Cut('ditau_tau0_jet_bdt_tight==1')
 TAU1_ANTI_MEDIUM = -TAU1_MEDIUM & TAU1_LOOSE
 

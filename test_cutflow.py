@@ -5,14 +5,14 @@ from mva.samples import Data
 from mva.samples import Higgs
 from rootpy.tree import Cut
 from mva.categories.hadhad import (
-    Category_Preselection,
-    Category_Cuts_VBF,
-    Category_Cuts_VBF_LowDR,
-    Category_Cuts_VBF_HighDR_Tight,
-    Category_Cuts_VBF_HighDR_Loose,
-    Category_Cuts_Boosted,
-    Category_Cuts_Boosted_Tight,
-    Category_Cuts_Boosted_Loose)
+  Category_Preselection,
+  Category_Cuts_VBF,
+  Category_Cuts_VBF_LowDR,
+  Category_Cuts_VBF_HighDR_Tight,
+  Category_Cuts_VBF_HighDR_Loose,
+  Category_Cuts_Boosted,
+  Category_Cuts_Boosted_Tight,
+  Category_Cuts_Boosted_Loose)
 # This line works because of hadhad/__init__.py having cb.py where the category is based:
 from mva.categories.hadhad import Category_Cuts_VBF_LowDR
 
@@ -22,7 +22,7 @@ mode     = 'MC'
 # mode_mc  = 'gg'
 mode_mc  = 'VBF'
 # Weighting only affects MC:
-weighted = True
+weighted = False
 
 if   mode == 'Data':
   cutflow_input = Data(year)
@@ -35,43 +35,62 @@ elif mode == 'MC':
 
 cuts_preselection = []
 
-# MC ntuple splitting
-if mode == 'MC':
-  if   year == 2015:
-    cuts_preselection.append(Cut('random_run_number <  284485'))
-  elif year == 2016:
-    cuts_preselection.append(Cut('random_run_number >= 284485'))
 # GRL
-if mode == 'Data':
-  cuts_preselection.append(Cut('grl_pass_run_lb == 1'))
+# Removed from v14 ntuples onwards
+# if mode == 'Data':
+#   cuts_preselection.append(Cut('grl_pass_run_lb == 1'))
+
+# MC ntuple splitting
+# In mva/samples/sample.py
+# Note that this cut is now standard and not part of preselection
+# if mode == 'MC':
+#   if   year == 2015:
+#     cuts_preselection.append(Cut('NOMINAL_pileup_random_run_number <  284490'))
+#   elif year == 2016:
+#     cuts_preselection.append(Cut('NOMINAL_pileup_random_run_number >= 284490'))
+
 # Trigger
-if   year == 2015:
-  cuts_preselection.append(Cut('HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM == 1'))
-elif year == 2016:
-  cuts_preselection.append(Cut('HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo == 1'))
+# In mva/categories/triggers.py
+# Note that this cut is now standard and not part of preselection
+# if   year == 2015:
+#   cuts_preselection.append(Cut('HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo_L1TAU20IM_2TAU12IM == 1'))
+# elif year == 2016:
+#   cuts_preselection.append(Cut('HLT_tau35_medium1_tracktwo_tau25_medium1_tracktwo == 1'))
+
 # Jet trigger
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut('(jet_0_pt > 70.0) && (abs(jet_0_eta) < 3.2)')) # okay when fabs changed to abs
 # Charge
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut('(abs(ditau_tau0_q) == 1) && (abs(ditau_tau1_q) == 1)'))
 # ntracks
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut(   '((ditau_tau0_n_tracks == 1) || (ditau_tau0_n_tracks == 3)) ' +
                              '&& ((ditau_tau1_n_tracks == 1) || (ditau_tau1_n_tracks == 3))')) # okay when more brackets added
 # Tau ID
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut(   '(n_taus_medium == 2) && (n_taus_tight >= 1) ' +
                              '&& (ditau_tau0_jet_bdt_medium == 1) && (ditau_tau1_jet_bdt_medium == 1)')) # okay when "==1" added for last two conditions
 # Tau pT
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut('(ditau_tau0_pt > 40) && (ditau_tau1_pt > 30)'))
 # OS
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut('selection_opposite_sign == 1'))
 # MET
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut('selection_met == 1'))
 # MET centrality
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut('selection_met_centrality == 1'))
 # deta
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut('selection_delta_eta == 1'))
 # dr
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut('selection_delta_r == 1'))
 # Lepton veto (no BDT)
+# In mva/categories/hadhad/common.py
 cuts_preselection.append(Cut('selection_lepton_veto == 1'))
 
 # -------------------------------------------------------------------------------------------------
@@ -118,9 +137,9 @@ HH16_CBA_VBF           = HH16_VBF_LOWDR | HH16_VBF_HIGHDR_TIGHT | HH16_VBF_HIGHD
 cuts_cutbased_boosted = []
 
 # Higgs pT
-cuts_cutbased_boosted.append(Cut('ditau_higgs_pt >= 100'))
+cuts_cutbased_boosted.append(Cut('ditau_higgs_pt > 100'))
 # Delta Eta Taus
-cuts_cutbased_boosted.append(Cut('ditau_deta <= 1.5'))
+cuts_cutbased_boosted.append(Cut('ditau_deta < 1.5'))
 
 # Boosted Cut-Based High PT
 HH16_BOOST_TIGHT = Cut('(ditau_higgs_pt >= 140) && (ditau_dr <= 1.5)')
@@ -133,28 +152,35 @@ HH16_CBA_BOOST   = HH16_BOOST_TIGHT | HH16_BOOST_LOOSE
 
 cuts = cuts_preselection
 
-                                                   # 2015 MC          2016 MC 1      2016 MC 2      2016 MC 3      TWiki  2016 Data 1   2016 Data 2   TWiki
-                                                   #                                 9.4663028717   9.4664030075   8.05   3690          3690          3690
-# cuts_cutbased_vbf.append(HH16_CBA_VBF)           # 1.8114967346     4.3541994094   4.4833865165   4.4833865165   3.81    200           200           200
-# cuts_cutbased_vbf.append(HH16_VBF_LOWDR)         # 1.0301972627     2.4898321628   2.5637075901   2.5637075901   2.18     60            60            60
-# cuts_cutbased_vbf.append(HH16_VBF_HIGHDR_TIGHT)  # 0.5888065695     1.4254974126   1.4677808284   1.4677808284   1.25     71            71            71
-# cuts_cutbased_vbf.append(HH16_VBF_HIGHDR_LOOSE)  # 0.1924895048     0.4389009475   0.4518596231   0.4518596231   0.38     69            69            69
-# cuts_cutbased_boosted.append(HH16_CBA_BOOST)     # 3.2805538177     8.0066175460   8.2450389862   4.2035040855   3.57   2526          2378          2378
-# cuts_cutbased_boosted.append(HH16_BOOST_TIGHT)   # 1.9652493        4.7694296836   4.9111442565   2.3474190235   2.00    934           874           874
-# cuts_cutbased_boosted.append(HH16_BOOST_LOOSE)   # 1.3153077364     3.2377154827   3.3339385986   1.8560403585   1.58   1592          1504          1504
+# cuts_cutbased_vbf.append(HH16_CBA_VBF)
+# cuts_cutbased_vbf.append(HH16_VBF_LOWDR)
+# cuts_cutbased_vbf.append(HH16_VBF_HIGHDR_TIGHT)
+# cuts_cutbased_vbf.append(HH16_VBF_HIGHDR_LOOSE)
+
+# cuts_cutbased_boosted.append(HH16_CBA_BOOST)
+# cuts_cutbased_boosted.append(HH16_BOOST_TIGHT)
+# cuts_cutbased_boosted.append(HH16_BOOST_LOOSE)
 
 # cuts = cuts + cuts_cutbased_vbf
 # cuts = cuts + cuts_cutbased_boosted
 
-cutflow_output = []
+# -------------------------------------------------------------------------------------------------
+
+# Without cuts (except those now hard-wired in the actual hhana code):
+print cutflow_input.events(weighted = weighted)[1].value
+
+# With cuts:
+print cutflow_input.events(weighted = weighted, cuts = reduce(operator.and_, cuts))[1].value
+
+# With cuts added one by one:
+# cutflow_output = []
 # for i in range(len(cuts)):
 #   cutflow_output.append(cutflow_input.events(weighted = weighted, cuts = reduce(operator.and_, cuts[0:i+1]))[1].value)
-cutflow_output.append(cutflow_input.events(weighted = weighted, cuts = reduce(operator.and_, cuts))[1].value)
-for i in cutflow_output:
-  print i
+# for i in cutflow_output:
+#   print i
 
-print 'From the category:'
-print cutflow_input.events(weighted = weighted, category = Category_Preselection)[1].value
+# print 'From the category:'
+# print cutflow_input.events(weighted = weighted, category = Category_Preselection)[1].value
 # print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF)[1].value
 # print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF_LowDR)[1].value
 # print cutflow_input.events(weighted = weighted, category = Category_Cuts_VBF_HighDR_Tight)[1].value
@@ -165,61 +191,30 @@ print cutflow_input.events(weighted = weighted, category = Category_Preselection
 
 # -------------------------------------------------------------------------------------------------
 
-# cuts0_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0]))[1].value
-# cuts1_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1]))[1].value
-# cuts2_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2]))[1].value
-# cuts3_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3]))[1].value
-# cuts4_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4]))[1].value
-# cuts5_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5]))[1].value
-# cuts6_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6]))[1].value
-# cuts7_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7]))[1].value
-# cuts8_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7] & cuts[8]))[1].value
-# cuts9_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7] & cuts[8] & cuts[9]))[1].value
-# cuts10_out = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7] & cuts[8] & cuts[9] & cuts[10]))[1].value
-# cuts11_out = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7] & cuts[8] & cuts[9] & cuts[10] & cuts[11]))[1].value
-# cuts12_out = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7] & cuts[8] & cuts[9] & cuts[10] & cuts[11] & cuts[12]))[1].value
-# 
-# print cuts0_out
-# print cuts1_out
-# print cuts2_out
-# print cuts3_out
-# print cuts4_out
-# print cuts5_out
-# print cuts6_out
-# print cuts7_out
-# print cuts8_out
-# print cuts9_out
-# print cuts10_out
-# print cuts11_out
-# print cuts12_out
+# v12 (all MC weighted => fractional values)
+#                         2015 MC 1       2016 MC 1       2016 MC 2       2016 MC 3       TWiki   2016 Data 1   2016 Data 2   TWiki
+# hh16_preselection                                        9.4663028717    9.4664030075    8.05   3690          3690          3690
+# hh16_CBA_vbf             1.8114967346    4.3541994094    4.4833865165    4.4833865165    3.81    200           200           200
+# hh16_vbf_lowdr           1.0301972627    2.4898321628    2.5637075901    2.5637075901    2.18     60            60            60
+# hh16_vbf_highdr_tight    0.5888065695    1.4254974126    1.4677808284    1.4677808284    1.25     71            71            71
+# hh16_vbf_highdr_loose    0.1924895048    0.4389009475    0.4518596231    0.4518596231    0.38     69            69            69
+# hh16_CBA_boost           3.2805538177    8.0066175460    8.2450389862    4.2035040855    3.57   2526          2378          2378
+# hh16_boost_tight         1.9652493000    4.7694296836    4.9111442565    2.3474190235    2.00    934           874           874
+# hh16_boost_loose         1.3153077364    3.2377154827    3.3339385986    1.8560403585    1.58   1592          1504          1504
+
+# v14 (all MC weighted => fractional values)
+#                         2016 MC 1       2016 MC 2       2016 MC 3       2016 MC 4       TWiki   2016 Data 1   2016 Data 2   2016 Data 3   TWiki
+#                                         2016/08/25      2016/08/26      2016/09/01              2016/08/26    2016/09/01
+# hh16_preselection       11.5462884903   11.5454444885   11.5454444885   11.2639646530   16.60   7361          7325          7639          7639
+# hh16_CBA_vbf             5.4178514481    5.4178514481    5.4178514481    5.3607172966    7.89    398           397           414           414
+# hh16_vbf_lowdr           2.9940612316    2.9940612316    2.9940612316    3.0650110245    4.48    117           116           122           122
+# hh16_vbf_highdr_tight    1.8344278336    1.8344278336    1.8344278336    1.7478357554    2.61    142           142           146           146
+# hh16_vbf_highdr_loose    0.5893480778    0.5893480778    0.5893480778    0.5478137136    0.80    139           139           146           146
+# hh16_CBA_boost           5.1471672058    5.1463232040    5.1463232040    5.0084547997    7.37   4713          4682          4890          4890
+# hh16_boost_tight         2.8209977150    2.8201534748    2.8201534748    2.8118076325    4.11   1723          1711          1773          1773
+# hh16_boost_loose         2.3261735439    2.3261735439    2.3261735439    2.1965723038    3.26   2990          2971          3117          3117
 
 # -------------------------------------------------------------------------------------------------
-
-# cut0 = Cut('')
-# cut0 = Cut('(abs(ditau_deta) < 1.37) || ((1.52 < abs(ditau_deta)) && (abs(ditau_deta) < 2.5))')
-
-# cut1 = mva.regions.Q
-# cut2 = mva.regions.P1P3
-# cut3 = mva.regions.ID_MEDIUM
-# cut4 = mva.categories.hadhad.common.LEAD_TAU_40
-# cut5 = mva.categories.hadhad.common.SUBLEAD_TAU_30
-# cut6 = mva.regions.OS
-# cut7 = mva.categories.hadhad.common.MET
-# cut8 = mva.categories.hadhad.common.DETA_TAUS
-# cut9 = mva.categories.hadhad.common.DR_TAUS
-
-# 2016 / 06 / 25 DTemple: Redefined the cuts as follows for the v10 ntuple acceptance challenge:
-# cut1 = mva.regions.Q
-# cut2 = mva.regions.P1P3
-# cut3 = mva.regions.ID_MEDIUM
-# cut4 = mva.regions.TRACK_ISOLATION
-# cut5 = mva.categories.hadhad.common.LEAD_TAU_40
-# cut6 = mva.categories.hadhad.common.SUBLEAD_TAU_30
-# cut7 = mva.regions.OS
-# cut8 = mva.categories.hadhad.common.MET
-# # cut9 = mva.categories.hadhad.common.MET_CENTRALITY
-# cut9 = mva.categories.hadhad.common.DETA_TAUS
-# cut10 = mva.categories.hadhad.common.DR_TAUS
 
 # cuts.append(Cut(''))
 # cuts.append(mva.regions.Q)
@@ -234,64 +229,16 @@ print cutflow_input.events(weighted = weighted, category = Category_Preselection
 # cuts.append(mva.categories.hadhad.common.DETA_TAUS)
 # cuts.append(mva.categories.hadhad.common.DR_TAUS)
 
-# -------------------------------------------------------------------------------------------------
-
-# cut0_out = higgs.events(weighted=weighted)[1].value
-# cut1_out = higgs.events(weighted=weighted, cuts = (cut1))[1].value
-# cut2_out = higgs.events(weighted=weighted, cuts = (cut1 & cut2))[1].value
-# cut3_out = higgs.events(weighted=weighted, cuts = (cut1 & cut2 & cut3))[1].value
-# cut4_out = higgs.events(weighted=weighted, cuts = (cut1 & cut2 & cut3 & cut4))[1].value
-# cut5_out = higgs.events(weighted=weighted, cuts = (cut1 & cut2 & cut3 & cut4 & cut5))[1].value
-# cut6_out = higgs.events(weighted=weighted, cuts = (cut1 & cut2 & cut3 & cut4 & cut5 & cut6))[1].value
-# cut7_out = higgs.events(weighted=weighted, cuts = (cut1 & cut2 & cut3 & cut4 & cut5 & cut6 & cut7))[1].value
-# cut8_out = higgs.events(weighted=weighted, cuts = (cut1 & cut2 & cut3 & cut4 & cut5 & cut6 & cut7 & cut8))[1].value
-# cut9_out = higgs.events(weighted=weighted, cuts = (cut1 & cut2 & cut3 & cut4 & cut5 & cut6 & cut7 & cut8 & cut9))[1].value
-
-# cut0_out = higgs.events(weighted=weighted, cuts = (cut0))[1].value
-# cut1_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1))[1].value
-# cut2_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1 & cut2))[1].value
-# cut3_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1 & cut2 & cut3))[1].value
-# cut4_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1 & cut2 & cut3 & cut4))[1].value
-# cut5_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1 & cut2 & cut3 & cut4 & cut5))[1].value
-# cut6_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1 & cut2 & cut3 & cut4 & cut5 & cut6))[1].value
-# cut7_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1 & cut2 & cut3 & cut4 & cut5 & cut6 & cut7))[1].value
-# cut8_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1 & cut2 & cut3 & cut4 & cut5 & cut6 & cut7 & cut8))[1].value
-# cut9_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1 & cut2 & cut3 & cut4 & cut5 & cut6 & cut7 & cut8 & cut9))[1].value
-# cut10_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1 & cut2 & cut3 & cut4 & cut5 & cut6 & cut7 & cut8 & cut9 & cut10))[1].value
-# cut11_out = higgs.events(weighted=weighted, cuts = (cut0 & cut1 & cut2 & cut3 & cut4 & cut5 & cut6 & cut7 & cut8 & cut9 & cut10 & cut11))[1].value
-
-# -------------------------------------------------------------------------------------------------
-
-# print 'No selection: ', a
-# print '      Charge: ', b
-# print '     nTracks: ', c
-# print '       tauID: ', d
-# print '     Leading: ', e
-# print '  Subleading: ', f
-# print '          OS: ', g
-# print '         MET: ', h
-# print '        Deta: ', i
-# print '          Dr: ', j
-
-# print cut0_out
-# print cut1_out
-# print cut2_out
-# print cut3_out
-# print cut4_out
-# print cut5_out
-# print cut6_out
-# print cut7_out
-# print cut8_out
-# print cut9_out
-# print cut10_out
-
-# -------------------------------------------------------------------------------------------------
-
-                                                   # 2015        2016
-# cuts = cuts_preselection + HH16_CBA_VBF          # 3.76988     9.19315
-# cuts = cuts_preselection + HH16_VBF_LOWDR        # 1.96524     4.76942
-# cuts = cuts_preselection + HH16_VBF_HIGHDR_TIGHT # 0.71506     1.78096
-# cuts = cuts_preselection + HH16_VBF_HIGHDR_LOOSE # 1.08957     2.64284
-# cuts = cuts_preselection + HH16_CBA_BOOST        # 3.76988     9.19315
-# cuts = cuts_preselection + HH16_BOOST_TIGHT      # 1.96524     4.76942
-# cuts = cuts_preselection + HH16_BOOST_LOOSE      # 1.80464     4.42376
+# cuts0_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0]))[1].value
+# cuts1_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1]))[1].value
+# cuts2_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2]))[1].value
+# cuts3_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3]))[1].value
+# cuts4_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4]))[1].value
+# cuts5_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5]))[1].value
+# cuts6_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6]))[1].value
+# cuts7_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7]))[1].value
+# cuts8_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7] & cuts[8]))[1].value
+# cuts9_out  = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7] & cuts[8] & cuts[9]))[1].value
+# cuts10_out = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7] & cuts[8] & cuts[9] & cuts[10]))[1].value
+# cuts11_out = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7] & cuts[8] & cuts[9] & cuts[10] & cuts[11]))[1].value
+# cuts12_out = cutflow_input.events(weighted = weighted, cuts = (cuts[0] & cuts[1] & cuts[2] & cuts[3] & cuts[4] & cuts[5] & cuts[6] & cuts[7] & cuts[8] & cuts[9] & cuts[10] & cuts[11] & cuts[12]))[1].value

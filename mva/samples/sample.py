@@ -567,15 +567,11 @@ class Sample(object):
             cuts &= trig_cut
             log.info('Trigger: {0}'.format(trig_cut))
         from .data import Data
-        if   isinstance(self, Data):
-            if self.channel == 'hadhad':
-                data_cut = Cut('grl_pass_run_lb == 1')
-                cuts &= data_cut
-        elif isinstance(self, MC):
+        if isinstance(self, MC):
             if self.year == 2015:
-                mc_cut = Cut('random_run_number < 284485')
+                mc_cut = Cut('NOMINAL_pileup_random_run_number < 284490')
             elif self.year == 2016:
-                mc_cut = Cut('random_run_number >= 284485')
+                mc_cut = Cut('NOMINAL_pileup_random_run_number >= 284490')
             cuts &= mc_cut
 
         if isinstance(self, SystematicsSample):
@@ -1376,16 +1372,16 @@ class MC(SystematicsSample):
                 systematics.update({
                         'TRIGGER': {
                             'NOMINAL': [
-                                'ditau_tau0_sf_NOMINAL_effSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM',
-                                'ditau_tau1_sf_NOMINAL_effSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM']},
+                                'ditau_tau0_sf_NOMINAL_TauEffSF_HLT_tau35_medium1_tracktwo_JETIDBDTMEDIUM',
+                                'ditau_tau1_sf_NOMINAL_TauEffSF_HLT_tau25_medium1_tracktwo_JETIDBDTMEDIUM']},
                         'TAU_RECO': {
                             'NOMINAL': [
-                                'ditau_tau0_sf_NOMINAL_TAU_EFF_RECO',
-                                'ditau_tau1_sf_NOMINAL_TAU_EFF_RECO']},
+                                'ditau_tau0_sf_NOMINAL_TauEffSF_reco',
+                                'ditau_tau1_sf_NOMINAL_TauEffSF_reco']},
                         'TAU_ELEOLR': {
                             'NOMINAL': [
-                                'ditau_tau0_sf_NOMINAL_effSF_VeryLooseLlhEleOLR_electron',
-                                'ditau_tau1_sf_NOMINAL_effSF_VeryLooseLlhEleOLR_electron']},
+                                'ditau_tau0_sf_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron',
+                                'ditau_tau1_sf_NOMINAL_TauEffSF_VeryLooseLlhEleOLR_electron']},
                 })
             else:
                 raise ValueError('year = {0} is not supported'.format(

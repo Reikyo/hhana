@@ -110,8 +110,8 @@ if __name__ == '__main__':
         update_merged_file(
             dataset,
             outname,
-            treename='NOMINAL',
-            rm_branches=['*_CP_*', 'tau*'])
+            treename='NOMINAL')#,
+            # rm_branches=['*_CP_*', 'tau*'])
 
         if args.systematics:
             if dataset.datatype == 1:
@@ -120,8 +120,5 @@ if __name__ == '__main__':
                     update_merged_file(
                         dataset,
                         outname,
-                        treename=syst_tree[0],
-                        rm_branches=['*_CP_*', 'tau*'])
-
-
-                
+                        treename=syst_tree[0])#,
+                        # rm_branches=['*_CP_*', 'tau*'])
